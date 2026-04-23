@@ -1,12 +1,12 @@
 import streamlit as st
-
+import cdll
 # Setup Page
 st.set_page_config(page_title="UINSSC Beats", layout="wide")
 st.title("🎵 UINSSC Beats: Industry Linked List Simulation")
 
 # Inisialisasi Session State
 if 'playlist' not in st.session_state:
-    st.session_state.playlist = MusicPlaylist()
+    st.session_state.playlist = cdll.MusicPlaylist()
     # Default Songs
     st.session_state.playlist.add_song("Bohemian Rhapsody", "Queen")
     st.session_state.playlist.add_song("Lathi", "Weird Genius")
