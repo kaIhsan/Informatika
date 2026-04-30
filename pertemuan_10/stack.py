@@ -1,31 +1,42 @@
-import stack 
-import streamlit as st
+# membuat stack dengan linked list
+# 1. Kelas Node
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
 
-st.set_page_config(page_title="Stack Simulation", layout="wide")
-
-# belum selesai, masih dalam proses pembuatan
-
-class stack:
+# 2. Kelas Stack
+class Stack:
     def __init__(self):
-        self.stack = []
-
+        self.head = None
+    # method untuk menambahkan stack
     def push(self, data):
-        self.stack.append(data)
-
+        new_node = Node(data)
+        new_node.next = self.head
+        self.head = new_node
+     # method untuk menghapus stack
     def pop(self):
-        if not self.is_empty():
-            return self.stack.pop()
-        else:
-            raise IndexError("Stack is empty")
-
+        if not self.head:
+            return None
+        temp = self.head
+        self.head = self.head.next
+        return temp.data
+    # method untuk menecek apakah stack kosong
+    def isEmpty(self):
+        return self.head is None
+    # method untuk melihat stack teratas
     def peek(self):
-        if not self.is_empty():
-            return self.stack[-1]
-        else:
-            raise IndexError("Stack is empty")
+        if not self.head:
+            return None
+        return self.head.data
 
-    def is_empty(self):
-        return len(self.stack) == 0
-
-    def size(self):
-        return len(self.stack)
+# Penggunaan
+mystack = Stack()
+mystack.push(10)
+mystack.push(20)
+mystack.push(30)
+mystack.display()
+mystack.pop()
+mystack.display()
+print(mystack.isEmpty())
+print(mystack.peek())
