@@ -1,21 +1,78 @@
-from queue import Queue
-from gtts import gTTS
-from ipython.display import Audio
 import streamlit as st
+from gtts import gTTS
+import myqueue
 
-st.title("Queue Visualizer")
-def generate_audio(text):
-    tts = gTTS(text=text, lang='en')
-    tts.save("audio.mp3")
-    return Audio("audio.mp3", autoplay=True)
+# =========================
+# TITLE
+# =========================
+
+st.title("🏥 Visualisasi Antrian Rumah Sakit")
+
+# =========================
+# SESSION STATE
+# =========================
 
 if 'queue' not in st.session_state:
-    st.session_state.queue = Queue()
-    st.session_state.counter = 1
+    st.session_state.queue = myqueue.Queue()
 
-st.header("halaman depan")
+# =========================
+# INPUT PASIEN
+# =========================
 
-if st.button("Tambah pasien"):
-    st.session_state.queue.enqueue(f"Data {st.session_state.counter}")
-    st.session_state.counter += 1
-    
+st.header("Halaman Depan")
+
+pasien = st.text_input("Masukkan Nama Pasien")
+
+if st.button("Tambah Pasien"):
+
+    if pasien.strip() != "":
+        st.session_state.queue.enqueue(pasien)
+        st.success(f"{pasien} berhasil ditambahkan")
+    else:
+        st.warning("Nama pasien tidak boleh kosong")
+
+# =========================
+# MENAMPILKAN ANTRIAN
+# =========================
+
+st.header("Antrian Saat Ini")
+
+if not st.session_state.queue.is_empty():
+
+    st.write(f"Jumlah Antrian: {st.session_state.queue.size}")
+
+    daftar = st.session_state.queue.display()
+
+    nomor = 1
+
+    for nama in daftar:
+        st.write(f"{nomor}. {nama}")
+        nomor += 1
+
+else:
+    st.info("Belum ada antrian")
+
+# =========================
+# PANGGIL PASIEN
+# =========================
+
+if st.button("Panggil Pasien Berikutnya"):
+
+    if not st.session_state.queue.is_empty():
+
+        nama = st.session_state.queue.peek()
+
+        teks = f"Pasien atas nama {nama}, silahkan menuju ruang dokter"
+
+        tts = gTTS(text=teks, lang='id')
+
+        tts.save("audio.mp3")
+
+        st.audio("audio.mp3", autoplay=True)
+
+        st.session_state.queue.dequeue()
+
+        st.success(f"Memanggil {nama}")
+
+    else:
+        st.warning("Antrian kosong")
